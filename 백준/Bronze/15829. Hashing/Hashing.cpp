@@ -10,9 +10,14 @@ int main() {
   string str;
   cin >> str;
 
-  int64_t result = 0;
+  uint64_t result = 0;
   for (int i = 0; i < str.length(); ++i) {
-    result += (str[i] - 96) * pow(31, i);
+    uint64_t mul = 1;
+    for (int j = 0; j < i; ++j) {
+      mul *= 31;
+      mul %= 1234567891;
+    }
+    result += (str[i] - 96) * mul;
   }
 
   cout << result % 1234567891;
