@@ -1,18 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int64_t> v;
+vector<int> v;
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int64_t k, n;
+  int k, n;
   cin >> k >> n;
 
   v.resize(k);
 
-  int64_t longest = 0;
+  int longest = 0;
   for (int i = 0; i < k; ++i) {
     cin >> v[i];
     longest = max(longest, v[i]);
