@@ -2,8 +2,7 @@
 using namespace std;
 
 vector<int> v;
-vector<int> temp;
-unordered_map<int, int> m;
+vector<int> compress;
 
 int main() {
   ios::sync_with_stdio(false);
@@ -13,22 +12,19 @@ int main() {
   cin >> n;
 
   v.resize(n);
-  temp.resize(n);
 
   for (int i = 0; i < n; ++i) {
     cin >> v[i];
-    temp[i] = v[i];
   }
+  compress = v;
 
-  sort(temp.begin(), temp.end());
-  temp.erase(unique(temp.begin(), temp.end()), temp.end());
-
-  for (int i = 0; i < temp.size(); ++i) {
-    m.insert({temp[i], i});
-  }
+  sort(compress.begin(), compress.end());
+  compress.erase(unique(compress.begin(), compress.end()), compress.end());
 
   for (int i = 0; i < n; ++i) {
-    cout << m[v[i]] << " ";
+    cout << lower_bound(compress.begin(), compress.end(), v[i]) -
+                compress.begin()
+         << " ";
   }
 
   return 0;
