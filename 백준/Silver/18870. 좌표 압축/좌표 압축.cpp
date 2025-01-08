@@ -3,7 +3,7 @@ using namespace std;
 
 vector<int> v;
 vector<int> temp;
-map<int, int> m;
+unordered_map<int, int> m;
 
 int main() {
   ios::sync_with_stdio(false);
