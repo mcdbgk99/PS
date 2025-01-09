@@ -2,31 +2,42 @@
 using namespace std;
 
 string str;
+vector<int> v;
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int n;
-  cin >> n;
+  int n, m;
+  cin >> n >> m >> str;
 
-  string p = "";
-  for (int i = 0; i < n * 2 + 1; ++i) {
-    p.append(i % 2 != 0 ? "O" : "I");
+  size_t index = 0;
+  int count = 0;
+  while (index < str.size()) {
+    if (index < str.size() - 1 && str[index] == 'I' && str[index + 1] == 'O') {
+      ++count;
+      index += 2;
+      continue;
+    }
+
+    if (count > 0) {
+      v.push_back(count + (str[index] == 'I' ? 0 : -1));
+      count = 0;
+    }
+
+    ++index;
   }
 
-  cin >> n >> str;
+  if (count > 0) {
+    v.push_back(count + (str[index] == 'I' ? 0 : -1));
+  }
 
   int result = 0;
 
-  while (!str.empty()) {
-    size_t found = str.find(p);
-    if (found == string::npos) {
-      break;
+  for (int i : v) {
+    if (i >= n) {
+      result += i - n + 1;
     }
-
-    ++result;
-    str = str.substr(found + 1, str.length() - found - 1);
   }
 
   cout << result;
