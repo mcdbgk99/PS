@@ -7,7 +7,7 @@ int main() {
 
   int n, r, c;
   cin >> n >> r >> c;
-  n = pow(2, n);
+  n = 1 << n;
 
   int result = 0;
   while (n > 1) {
