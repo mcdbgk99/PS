@@ -17,11 +17,10 @@ int main() {
   }
 
   sort(v.begin(), v.end(), [](tuple<int, int>& left, tuple<int, int>& right) {
-    return get<1>(left) > get<1>(right) ||
-           (get<1>(left) == get<1>(right) ? get<0>(left) > get<0>(right)
-                                          : false);
+    return get<1>(left) < get<1>(right) ||
+           (get<1>(left) == get<1>(right) ? get<0>(left) < get<0>(right)
+                                         : false);
   });
-  reverse(v.begin(), v.end());
 
   int last_end = 0;
   int result = 0;
