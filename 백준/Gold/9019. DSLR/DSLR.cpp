@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<tuple<bool, int, char>> visited;
 deque<int> dq;
 
 int main() {
@@ -15,8 +14,8 @@ int main() {
     int a, b;
     cin >> a >> b;
 
-    visited.assign(10000, {false, -1, 0});
-    visited[a] = {true, -1, 0};
+    vector<tuple<bool, int, char>> visited(10000, {false, -1, 0});
+    get<0>(visited[a]) = true;
     dq.push_back(a);
 
     while (!dq.empty()) {
