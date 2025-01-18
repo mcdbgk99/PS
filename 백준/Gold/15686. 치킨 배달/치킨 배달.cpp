@@ -30,13 +30,11 @@ int main() {
 
   do {
     vector<int> temp;
-
     for (int i = 0; i < chicken_indexes.size(); ++i) {
       if (chicken_indexes[i] == 1) {
         temp.push_back(i);
       }
     }
-
     s.insert(temp);
   } while (next_permutation(chicken_indexes.begin(), chicken_indexes.end()));
 
@@ -48,17 +46,11 @@ int main() {
       int dist = INT32_MAX;
       for (int i : v) {
         auto [chicken_x, chicken_y] = chicken[i];
-        int now_dist = abs(house_x - chicken_x) + abs(house_y - chicken_y);
-        if (dist > now_dist) {
-          dist = now_dist;
-        }
+        dist = min(dist, abs(house_x - chicken_x) + abs(house_y - chicken_y));
       }
       sum += dist;
     }
-
-    if (result > sum) {
-      result = sum;
-    }
+    result = min(result, sum);
   }
 
   cout << result;
