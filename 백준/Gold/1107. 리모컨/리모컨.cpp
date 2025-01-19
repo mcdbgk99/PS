@@ -18,7 +18,7 @@ int main() {
 
   int result = abs(100 - n);
 
-  for (int i = 0; i < 10000000; ++i) {
+  for (int i = 0; i < 1000000; ++i) {
     int temp = i;
     bool skip = false;
     int digits = 0;
