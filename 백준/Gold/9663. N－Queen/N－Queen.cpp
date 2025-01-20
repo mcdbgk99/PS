@@ -1,7 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-deque<tuple<int, vector<bitset<15>>>> dq;
+constexpr size_t kBoardSize = 14 * 14;
+deque<tuple<int, bitset<kBoardSize>>> dq;
 
 int main() {
   ios::sync_with_stdio(false);
@@ -11,7 +12,7 @@ int main() {
   cin >> n;
 
   int result = 0;
-  dq.push_back({0, vector<bitset<15>>(n)});
+  dq.push_back({0, bitset<kBoardSize>()});
 
   while (!dq.empty()) {
     auto [now_y, now_board] = dq.back();
@@ -23,25 +24,25 @@ int main() {
     }
 
     for (int queen = 0; queen < n; ++queen) {
-      if (now_board[queen][now_y]) {
+      if (now_board[queen + now_y * n]) {
         continue;
       }
 
-      vector<bitset<15>> new_board = now_board;
-      new_board[queen][now_y] = 1;
+      bitset<kBoardSize> new_board = now_board;
+      new_board[queen + now_y * n] = 1;
 
       int left = queen - 1;
       int right = queen + 1;
       for (int new_y = now_y + 1; new_y < n; ++new_y) {
         if (left >= 0) {
-          new_board[left][new_y] = 1;
+          new_board[left + new_y * n] = 1;
           --left;
         }
 
-        new_board[queen][new_y] = 1;
+        new_board[queen + new_y * n] = 1;
 
         if (right < n) {
-          new_board[right][new_y] = 1;
+          new_board[right + new_y * n] = 1;
           ++right;
         }
       }
@@ -50,7 +51,7 @@ int main() {
     }
   }
 
-  cout << result;
+  cout << result << "\n";
 
   return 0;
 }
