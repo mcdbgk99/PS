@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-constexpr size_t kBoardSize = 14 * 14;
+constexpr size_t kSize = 14;
 
 int main() {
   ios::sync_with_stdio(false);
@@ -12,31 +12,13 @@ int main() {
 
   auto dfs = [&n](int start_x) {
     int result = 0;
-    deque<tuple<int, bitset<kBoardSize>>> dq;
+    deque<tuple<int, int, int, int>> dq;
 
-    bitset<kBoardSize> bs;
-    bs[start_x] = 1;
-
-    int left = start_x - 1;
-    int right = start_x + 1;
-    for (int new_y = 1; new_y < n; ++new_y) {
-      if (left >= 0) {
-        bs[left + new_y * n] = 1;
-        --left;
-      }
-
-      bs[start_x + new_y * n] = 1;
-
-      if (right < n) {
-        bs[right + new_y * n] = 1;
-        ++right;
-      }
-    }
-
-    dq.push_back({1, bs});
+    dq.push_back(
+        {1, 1 << (start_x), 1 << (0 - start_x + n - 1), 1 << (0 + start_x)});
 
     while (!dq.empty()) {
-      auto [now_y, now_board] = dq.back();
+      auto [now_y, mid, left, right] = dq.back();
       dq.pop_back();
 
       if (now_y == n) {
@@ -45,30 +27,15 @@ int main() {
       }
 
       for (int queen = 0; queen < n; ++queen) {
-        if (now_board[queen + now_y * n]) {
+        if ((mid & (1 << (queen))) != 0 ||
+            (left & (1 << (now_y - queen + n - 1))) != 0 ||
+            (right & (1 << (now_y + queen))) != 0) {
           continue;
         }
 
-        bitset<kBoardSize> new_board = now_board;
-        new_board[queen + now_y * n] = 1;
-
-        left = queen - 1;
-        right = queen + 1;
-        for (int new_y = now_y + 1; new_y < n; ++new_y) {
-          if (left >= 0) {
-            new_board[left + new_y * n] = 1;
-            --left;
-          }
-
-          new_board[queen + new_y * n] = 1;
-
-          if (right < n) {
-            new_board[right + new_y * n] = 1;
-            ++right;
-          }
-        }
-
-        dq.push_back({now_y + 1, new_board});
+        dq.push_back({now_y + 1, mid | (1 << queen),
+                      left | (1 << (now_y - queen + n - 1)),
+                      right | (1 << (now_y + queen))});
       }
     }
 
