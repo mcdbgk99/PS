@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-constexpr size_t kSize = 14;
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
