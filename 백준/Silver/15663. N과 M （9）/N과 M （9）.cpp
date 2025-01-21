@@ -1,10 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int> v;
-queue<tuple<vector<int>, vector<bool>>> q;
-set<vector<int>> result;
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -12,19 +8,19 @@ int main() {
   int n, m;
   cin >> n >> m;
 
-  v.resize(n);
+  vector<int> v(n);
 
   for (int i = 0; i < n; ++i) {
     cin >> v[i];
   }
-
   sort(v.begin(), v.end());
-  vector<bool> temp(n, false);
-  q.push({{}, temp});
+
+  set<vector<int>> result;
+  queue<tuple<vector<int>, int>> q;
+  q.push({{}, 0});
 
   while (!q.empty()) {
-    vector<int> now_v = get<0>(q.front());
-    vector<bool> now_visited = get<1>(q.front());
+    auto [now_v, mask] = q.front();
     q.pop();
 
     if (now_v.size() == m) {
@@ -33,20 +29,22 @@ int main() {
     }
 
     for (int i = 0; i < n; ++i) {
-      if (now_visited[i]) {
+      if (mask & (1 << i)) {
         continue;
       }
 
-      now_v.push_back(v[i]);
-      now_visited[i] = true;
-      q.push({now_v, now_visited});
-      now_visited[i] = false;
-      now_v.pop_back();
+      if (i > 0 && v[i] == v[i - 1] && !(mask & (1 << (i - 1)))) {
+        continue;
+      }
+
+      vector<int> next_v = now_v;
+      next_v.push_back(v[i]);
+      q.push({next_v, mask | (1 << i)});
     }
   }
 
-  for (auto& vv : result) {
-    for (int i : vv) {
+  for (auto& comb : result) {
+    for (int i : comb) {
       cout << i << " ";
     }
     cout << "\n";
