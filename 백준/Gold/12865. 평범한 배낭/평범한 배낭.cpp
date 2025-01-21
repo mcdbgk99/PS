@@ -8,7 +8,7 @@ int main() {
   int n, k;
   cin >> n >> k;
 
-  vector<vector<int>> dp(n + 1, vector<int>(k + 1, 0));
+  vector<vector<int>> dp(2, vector<int>(k + 1, 0));
 
   for (int i = 1; i <= n; ++i) {
     int weight, value;
@@ -16,14 +16,16 @@ int main() {
 
     for (int j = 0; j <= k; ++j) {
       if (weight <= j) {
-        dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight] + value);
+        dp[1][j] = max(dp[0][j], dp[0][j - weight] + value);
       } else {
-        dp[i][j] = dp[i - 1][j];
+        dp[1][j] = dp[0][j];
       }
     }
+
+    dp[0] = dp[1];
   }
 
-  cout << *max_element(dp[n].begin(), dp[n].end());
+  cout << *max_element(dp[1].begin(), dp[1].end());
 
   return 0;
 }
