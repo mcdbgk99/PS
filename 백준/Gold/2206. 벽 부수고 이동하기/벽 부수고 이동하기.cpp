@@ -23,7 +23,7 @@ int main() {
   dq.push_back({0, 0, 0});
 
   while (!dq.empty()) {
-    auto [now_y, now_x, breached] = dq.front();
+    auto [now_y, now_x, now_breached] = dq.front();
     dq.pop_front();
 
     for (auto& pattern : patterns) {
@@ -35,25 +35,22 @@ int main() {
       }
 
       int need_breach = v[new_y][new_x] == '1';
+      int new_breached = now_breached;
 
-      if (visited[need_breach | breached][new_y][new_x] != -1 &&
-          visited[need_breach | breached][new_y][new_x] <=
-              visited[breached][now_y][now_x] + 1) {
+      if (need_breach) {
+        if (now_breached) {
+          continue;
+        }
+        new_breached = 1;
+      }
+
+      if (visited[new_breached][new_y][new_x] != -1) {
         continue;
       }
 
-      if (need_breach) {
-        if (breached) {
-          continue;
-        }
-
-        dq.push_back({new_y, new_x, 1});
-      } else {
-        dq.push_back({new_y, new_x, breached});
-      }
-
-      visited[need_breach | breached][new_y][new_x] =
-          visited[breached][now_y][now_x] + 1;
+      visited[new_breached][new_y][new_x] =
+          visited[now_breached][now_y][now_x] + 1;
+      dq.push_back({new_y, new_x, new_breached});
     }
   }
 
