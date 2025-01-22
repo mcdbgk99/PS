@@ -14,17 +14,17 @@ int main() {
     cin >> v[i];
   }
 
-  deque<tuple<int, int, int>> dq;
+  queue<tuple<int, int, int>> q;
   vector<vector<int>> patterns = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
   vector<vector<vector<int>>> visited(
       2, vector<vector<int>>(n, vector<int>(m, -1)));
 
   visited[0][0][0] = 1;
-  dq.push_back({0, 0, 0});
+  q.push({0, 0, 0});
 
-  while (!dq.empty()) {
-    auto [now_y, now_x, now_breached] = dq.front();
-    dq.pop_front();
+  while (!q.empty()) {
+    auto [now_y, now_x, now_breached] = q.front();
+    q.pop();
 
     for (auto& pattern : patterns) {
       int new_y = now_y + pattern[0];
@@ -50,7 +50,7 @@ int main() {
 
       visited[new_breached][new_y][new_x] =
           visited[now_breached][now_y][now_x] + 1;
-      dq.push_back({new_y, new_x, new_breached});
+      q.push({new_y, new_x, new_breached});
     }
   }
 
