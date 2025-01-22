@@ -1,6 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+struct Node {
+  short y;
+  short x;
+  bool breached;
+};
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -8,54 +14,60 @@ int main() {
   int n, m;
   cin >> n >> m;
 
-  vector<string> v(n);
+  vector<char> v(n * m);
 
   for (int i = 0; i < n; ++i) {
-    cin >> v[i];
+    string str;
+    cin >> str;
+    memcpy(&v[i * m], str.data(), m);
   }
 
-  queue<tuple<int, int, int>> q;
-  vector<vector<int>> patterns = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-  vector<vector<vector<int>>> visited(
-      2, vector<vector<int>>(n, vector<int>(m, -1)));
+  deque<Node> dq;
+  array<int, 4> pattern_y = {-1, 1, 0, 0};
+  array<int, 4> pattern_x = {0, 0, -1, 1};
+  vector<int> visited(n * m * 2, -1);
 
-  visited[0][0][0] = 1;
-  q.push({0, 0, 0});
+  visited[0] = 1;
+  dq.push_back({0, 0, false});
 
-  while (!q.empty()) {
-    auto [now_y, now_x, now_breached] = q.front();
-    q.pop();
+  while (!dq.empty()) {
+    Node now = dq.front();
+    int now_index = (now.y * m + now.x) * 2 + now.breached;
+    dq.pop_front();
 
-    for (auto& pattern : patterns) {
-      int new_y = now_y + pattern[0];
-      int new_x = now_x + pattern[1];
+    for (int i = 0; i < 4; ++i) {
+      int new_y = now.y + pattern_y[i];
+      int new_x = now.x + pattern_x[i];
 
       if (new_y < 0 || new_y >= n || new_x < 0 || new_x >= m) {
         continue;
       }
 
-      int need_breach = v[new_y][new_x] == '1';
-      int new_breached = now_breached;
+      bool need_breach = v[new_y * m + new_x] == '1';
+      bool new_breached = now.breached;
 
       if (need_breach) {
-        if (now_breached) {
+        if (now.breached) {
           continue;
         }
-        new_breached = 1;
+        new_breached = true;
       }
 
-      if (visited[new_breached][new_y][new_x] != -1) {
+      int new_index = (new_y * m + new_x) * 2 + new_breached;
+
+      if (visited[new_index] != -1) {
         continue;
       }
 
-      visited[new_breached][new_y][new_x] =
-          visited[now_breached][now_y][now_x] + 1;
-      q.push({new_y, new_x, new_breached});
+      visited[new_index] = visited[now_index] + 1;
+      dq.push_back(
+          {static_cast<short>(new_y), static_cast<short>(new_x), new_breached});
     }
   }
 
+  int dest_index = ((n - 1) * m + (m - 1)) * 2;
   cout << static_cast<int>(
-      min<uint32_t>(visited[0][n - 1][m - 1], visited[1][n - 1][m - 1]));
+      min<uint32_t>(visited[dest_index], visited[dest_index + 1]));
 
   return 0;
 }
