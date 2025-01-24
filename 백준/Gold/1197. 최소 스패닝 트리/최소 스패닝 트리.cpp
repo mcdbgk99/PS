@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int Find(vector<int>& points, int x) {
+  if (points[x] < 0) {
+    return x;
+  }
+
+  return points[x] = Find(points, points[x]);
+}
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int v, e;
+  cin >> v >> e;
+
+  vector<int> points(v + 1, -1);
+  vector<array<int, 3>> edges;
+  edges.reserve(e);
+
+  for (int i = 0; i < e; ++i) {
+    int a, b, c;
+    cin >> a >> b >> c;
+    edges.push_back({a, b, c});
+  }
+
+  sort(edges.begin(), edges.end(),
+       [](array<int, 3>& left, array<int, 3>& right) {
+         return left[2] < right[2];
+       });
+
+  array<int64_t, 2> result = {0, 0};
+
+  for (int i = 0; i < e; ++i) {
+    auto [a, b, c] = edges[i];
+
+    a = Find(points, a);
+    b = Find(points, b);
+
+    if (a != b) {
+      result[0] += c;
+      ++result[1];
+
+      if (points[a] < points[b]) {
+        swap(a, b);
+      } else if (points[a] == points[b]) {
+        --points[a];
+      }
+
+      points[b] = a;
+    }
+
+    if (result[1] >= v - 1) {
+      break;
+    }
+  }
+
+  cout << result[0];
+
+  return 0;
+}
