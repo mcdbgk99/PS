@@ -2,8 +2,8 @@
 using namespace std;
 
 struct Node {
-  short y;
-  short x;
+  int y;
+  int x;
   bool breached;
 };
 
@@ -23,8 +23,8 @@ int main() {
   }
 
   deque<Node> dq;
-  array<int, 4> pattern_y = {-1, 1, 0, 0};
-  array<int, 4> pattern_x = {0, 0, -1, 1};
+  constexpr array<int, 4> pattern_y = {-1, 1, 0, 0};
+  constexpr array<int, 4> pattern_x = {0, 0, -1, 1};
   vector<int> visited(n * m * 2, -1);
 
   visited[0] = 1;
@@ -60,8 +60,7 @@ int main() {
       }
 
       visited[new_index] = visited[now_index] + 1;
-      dq.push_back(
-          {static_cast<short>(new_y), static_cast<short>(new_x), new_breached});
+      dq.push_back({new_y, new_x, new_breached});
     }
   }
 
