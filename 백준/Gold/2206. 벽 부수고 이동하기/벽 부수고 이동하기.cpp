@@ -1,72 +1,110 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct Node {
-  int y;
-  int x;
-  bool breached;
-};
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int n, m;
+  int16_t n, m;
   cin >> n >> m;
 
-  vector<char> v(n * m);
+  vector<string> v(n);
 
   for (int i = 0; i < n; ++i) {
-    string str;
-    cin >> str;
-    memcpy(&v[i * m], str.data(), m);
+    cin >> v[i];
   }
 
-  deque<Node> dq;
-  constexpr array<int, 4> pattern_y = {-1, 1, 0, 0};
-  constexpr array<int, 4> pattern_x = {0, 0, -1, 1};
-  vector<int> visited(n * m * 2, -1);
+  constexpr array<int8_t, 4> pattern_y = {-1, 1, 0, 0};
+  constexpr array<int8_t, 4> pattern_x = {0, 0, -1, 1};
 
-  visited[0] = 1;
-  dq.push_back({0, 0, false});
+  auto bfs = [n, m, &v, &pattern_y, &pattern_x](int16_t y, int16_t x) {
+    deque<tuple<int16_t, int16_t>> dq;
+    vector<vector<int>> visited(n, vector<int>(m, -1));
 
-  while (!dq.empty()) {
-    Node now = dq.front();
-    int now_index = (now.y * m + now.x) * 2 + now.breached;
-    dq.pop_front();
+    visited[y][x] = 1;
+    dq.emplace_back(y, x);
 
-    for (int i = 0; i < 4; ++i) {
-      int new_y = now.y + pattern_y[i];
-      int new_x = now.x + pattern_x[i];
+    while (!dq.empty()) {
+      auto [now_y, now_x] = dq.front();
+      dq.pop_front();
 
-      if (new_y < 0 || new_y >= n || new_x < 0 || new_x >= m) {
-        continue;
-      }
+      for (int i = 0; i < 4; ++i) {
+        int16_t new_y = now_y + pattern_y[i];
+        int16_t new_x = now_x + pattern_x[i];
 
-      bool need_breach = v[new_y * m + new_x] == '1';
-      bool new_breached = now.breached;
-
-      if (need_breach) {
-        if (now.breached) {
+        if (new_y < 0 || new_y >= n || new_x < 0 || new_x >= m) {
           continue;
         }
-        new_breached = true;
+
+        if (v[new_y][new_x] != '0' || visited[new_y][new_x] != -1) {
+          continue;
+        }
+
+        visited[new_y][new_x] = visited[now_y][now_x] + 1;
+        dq.emplace_back(new_y, new_x);
       }
+    }
 
-      int new_index = (new_y * m + new_x) * 2 + new_breached;
+    return visited;
+  };
 
-      if (visited[new_index] != -1) {
+  auto&& start = bfs(0, 0);
+  auto&& end = bfs(n - 1, m - 1);
+  int result = (start[n - 1][m - 1] != -1 ? start[n - 1][m - 1] : INT32_MAX);
+
+  for (int16_t now_y = 0; now_y < n; ++now_y) {
+    for (int16_t now_x = 0; now_x < m; ++now_x) {
+      if (v[now_y][now_x] != '1') {
         continue;
       }
 
-      visited[new_index] = visited[now_index] + 1;
-      dq.push_back({new_y, new_x, new_breached});
+      if (result < n + m) {
+        cout << result;
+        return 0;
+      }
+
+      vector<tuple<int16_t, int16_t, int>> first;
+      vector<tuple<int16_t, int16_t, int>> second;
+      first.reserve(4);
+      second.reserve(4);
+
+      for (int i = 0; i < 4; ++i) {
+        int16_t new_y = now_y + pattern_y[i];
+        int16_t new_x = now_x + pattern_x[i];
+
+        if (new_y < 0 || new_y >= n || new_x < 0 || new_x >= m) {
+          continue;
+        }
+
+        if (start[new_y][new_x] != -1) {
+          first.emplace_back(new_y, new_x, start[new_y][new_x]);
+        }
+
+        if (end[new_y][new_x] != -1) {
+          second.emplace_back(new_y, new_x, end[new_y][new_x]);
+        }
+      }
+
+      if (first.empty() || second.empty()) {
+        continue;
+      }
+
+      for (auto [first_y, first_x, first_cost] : first) {
+        for (auto [second_y, second_x, second_cost] : second) {
+          if (first_y == second_y && first_x == second_x) {
+            continue;
+          }
+
+          int dist = first_cost + second_cost + 1;
+          if (dist < result) {
+            result = dist;
+          }
+        }
+      }
     }
   }
 
-  int dest_index = ((n - 1) * m + (m - 1)) * 2;
-  cout << static_cast<int>(
-      min<uint32_t>(visited[dest_index], visited[dest_index + 1]));
+  cout << (result != INT32_MAX ? result : -1);
 
   return 0;
 }
