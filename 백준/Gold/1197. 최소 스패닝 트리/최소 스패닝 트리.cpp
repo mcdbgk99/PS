@@ -1,12 +1,21 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int Find(vector<int>& points, int x) {
-  if (points[x] < 0) {
-    return x;
+void Union(vector<int>& points, int a, int b) {
+  if (points[a] > points[b]) {
+    swap(a, b);
   }
 
-  return points[x] = Find(points, points[x]);
+  points[a] += points[b];
+  points[b] = a;
+}
+
+int Find(vector<int>& points, int x) {
+  while (points[x] >= 0) {
+    x = points[x];
+  }
+
+  return x;
 }
 
 int main() {
@@ -43,13 +52,7 @@ int main() {
       result[0] += c;
       ++result[1];
 
-      if (points[a] < points[b]) {
-        swap(a, b);
-      } else if (points[a] == points[b]) {
-        --points[a];
-      }
-
-      points[b] = a;
+      Union(points, a, b);
     }
 
     if (result[1] >= v - 1) {
