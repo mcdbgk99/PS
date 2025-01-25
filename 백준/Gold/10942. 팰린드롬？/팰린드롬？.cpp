@@ -1,5 +1,5 @@
 #pragma GCC optimize("O3")
-#pragma comment(linker, "/STACK:336777216").
+#pragma comment(linker, "/STACK:336777216")
 #include <stdio.h>
 #include <unistd.h>
 
@@ -11,19 +11,11 @@ inline char readChar();
 template <class T = int>
 inline T readInt();
 inline void writeWord(const char *s);
-static const int buf_size = 1 << 17;
+static const int buf_size = 1 << 18;
+static char buf[buf_size];
 inline char getChar() {
-  static char buf[buf_size];
   static int len = 0, pos = 0;
-  if (pos == len) {
-    pos = 0;
-    ssize_t bytes_read;
-    asm volatile("syscall"
-                 : "=a"(bytes_read)
-                 : "a"(0), "D"(0), "S"(buf), "d"(buf_size)
-                 : "rcx", "r11", "memory");
-    len = bytes_read < 0 ? 0 : bytes_read;
-  }
+  if (pos == len) pos = 0, len = fread(buf, 1, buf_size, stdin);
   if (pos == len) return -1;
   return buf[pos++];
 }
@@ -39,16 +31,12 @@ inline T readInt() {
   while ('0' <= c && c <= '9') x = x * 10 + c - '0', c = getChar();
   return x;
 }
-constexpr int OUT_BUF_SIZE = 1 << 17;
+constexpr int OUT_BUF_SIZE = 1 << 16;
 static char out_buf[OUT_BUF_SIZE];
 static size_t out_pos = 0;
 inline void flush() {
   if (out_pos == 0) return;
-  ssize_t bytes_written;
-  asm volatile("syscall"
-               : "=a"(bytes_written)
-               : "a"(1), "D"(1), "S"(out_buf), "d"(out_pos)
-               : "rcx", "r11", "memory");
+  write(STDOUT_FILENO, out_buf, out_pos);
   out_pos = 0;
 }
 inline void writeChar(char c) {
