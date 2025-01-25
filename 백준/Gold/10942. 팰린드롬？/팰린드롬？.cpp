@@ -190,7 +190,7 @@ int main() {
     uint64_t hash_backward =
         hash_suffix[e_backward] -
         hash_suffix[s_backward - 1] * hash_power[e_backward - s_backward + 1];
-    cout << (hash_forward == hash_backward) << "\n";
+    cout << (hash_forward == hash_backward) << '\n';
   }
 
   return 0;
