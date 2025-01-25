@@ -5,8 +5,7 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  random_device rd;
-  mt19937 gen(rd());
+  mt19937 gen(chrono::steady_clock::now().time_since_epoch().count());
   uniform_int_distribution<> dist(0x10203040, 0x50607080);
   uint64_t hash_base = dist(gen);
 
@@ -25,13 +24,7 @@ int main() {
 
   for (int i = 1; i <= n; ++i) {
     hash_power[i] = hash_power[i - 1] * hash_base;
-  }
-
-  for (int i = 1; i <= n; ++i) {
     hash_prefix[i] = hash_prefix[i - 1] * hash_base + v[i];
-  }
-
-  for (int i = 1; i <= n; ++i) {
     hash_suffix[i] = hash_suffix[i - 1] * hash_base + v[n - i + 1];
   }
 
