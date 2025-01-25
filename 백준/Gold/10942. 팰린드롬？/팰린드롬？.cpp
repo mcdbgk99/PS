@@ -24,9 +24,8 @@ template <class T>
 inline T readInt() {
   int s = 1, c = readChar();
   T x = 0;
-  if (c == '-') s = -1, c = getChar();
   while ('0' <= c && c <= '9') x = x * 10 + c - '0', c = getChar();
-  return s == 1 ? x : -x;
+  return x;
 }
 constexpr int OUT_BUF_SIZE = 1 << 16;
 static char out_buf[OUT_BUF_SIZE];
