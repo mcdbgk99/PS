@@ -1,8 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+mt19937 gen(random_device{}());
+uniform_int_distribution<int> dist(0, 1);
+
 void Union(vector<int>& points, int a, int b) {
-  if (points[a] > points[b]) {
+  if (dist(gen) == 0) {
     swap(a, b);
   }
 
@@ -26,26 +29,25 @@ int main() {
   cin >> v >> e;
 
   vector<int> points(v + 1, -1);
-  vector<array<int, 3>> edges;
+  vector<tuple<int, int16_t, int16_t>> edges;
   edges.reserve(e);
 
   for (int i = 0; i < e; ++i) {
     int a, b, c;
     cin >> a >> b >> c;
-    edges.push_back({a, b, c});
+    edges.emplace_back(c, a, b);
   }
 
   sort(edges.begin(), edges.end(),
-       [](array<int, 3>& left, array<int, 3>& right) {
-         return left[2] < right[2];
+       [](tuple<int, int16_t, int16_t>& left,
+          tuple<int, int16_t, int16_t>& right) {
+         return get<0>(left) < get<0>(right);
        });
 
   int64_t result = 0;
   int count = 0;
 
-  for (int i = 0; i < e; ++i) {
-    auto [a, b, c] = edges[i];
-
+  for (auto [c, a, b] : edges) {
     a = Find(points, a);
     b = Find(points, b);
 
