@@ -1,13 +1,11 @@
 #pragma GCC optimize("O3")
 #include <bits/stdc++.h>
+#include <unistd.h>
 using namespace std;
 
 inline int readChar();
 template <class T = int>
 inline T readInt();
-template <class T>
-inline void writeInt(T x, char end = 0);
-inline void writeChar(int x);
 inline void writeWord(const char *s);
 static const int buf_size = 1 << 18;
 inline int getChar() {
@@ -30,69 +28,91 @@ inline T readInt() {
   while ('0' <= c && c <= '9') x = x * 10 + c - '0', c = getChar();
   return s == 1 ? x : -x;
 }
-static int write_pos = 0;
-static char write_buf[buf_size];
-inline void writeChar(int x) {
-  if (write_pos == buf_size)
-    fwrite(write_buf, 1, buf_size, stdout), write_pos = 0;
-  write_buf[write_pos++] = x;
+constexpr int OUT_BUF_SIZE = 1 << 16;
+static char out_buf[OUT_BUF_SIZE];
+static size_t out_pos = 0;
+inline void flush() {
+  if (out_pos == 0) return;
+  write(STDOUT_FILENO, out_buf, out_pos);
+  out_pos = 0;
 }
-template <class T>
-inline void writeInt(T x, char end) {
-  if (x < 0) writeChar('-'), x = -x;
-  char s[24];
-  int n = 0;
-  while (x || !n) s[n++] = '0' + x % 10, x /= 10;
-  while (n--) writeChar(s[n]);
-  if (end) writeChar(end);
+inline void writeChar(char c) {
+  if (out_pos == OUT_BUF_SIZE) flush();
+  out_buf[out_pos++] = c;
 }
 inline void writeWord(const char *s) {
   while (*s) writeChar(*s++);
 }
 struct Flusher {
-  ~Flusher() {
-    if (write_pos) fwrite(write_buf, 1, write_pos, stdout), write_pos = 0;
-  }
+  ~Flusher() { flush(); }
 } flusher;
 
-int main() {
-  mt19937 gen(chrono::steady_clock::now().time_since_epoch().count());
-  uniform_int_distribution<> dist(0x12341234, 0x56785678);
-  uint64_t hash_base = dist(gen);
+constexpr uint32_t kCompileTimeHash(char *str, uint32_t seed = 0) {
+  return *str ? kCompileTimeHash(str + 1, seed * 88848 + *str) : seed;
+}
+constexpr uint32_t kDateTimeHash = kCompileTimeHash(__DATE__ __TIME__);
+constexpr uint32_t kFileHash = kCompileTimeHash(__FILE__);
+constexpr uint64_t kMakeHash(uint64_t hash) {
+  hash ^= hash >> 33;
+  hash *= 0xff51afd7ed558ccdULL;
+  hash ^= hash >> 33;
+  hash *= 0xc4ceb9fe1a85ec53ULL;
+  hash ^= hash >> 33;
+  return hash;
+}
+constexpr uint64_t kHashBase = kMakeHash(kDateTimeHash ^ kFileHash);
+constexpr int kMaxN = 2000;
 
-  int n = readInt();
+constexpr auto kMakeHashPower() {
+  array<uint64_t, kMaxN + 2> arr{1};
+  for (int i = 1; i <= kMaxN; ++i) {
+    arr[i] = arr[i - 1] * kHashBase;
+  }
+  return arr;
+}
+constexpr auto kHashPower = kMakeHashPower();
+
+int main() {
+  const int n = readInt();
 
   vector<int> v(n + 1);
 
+  [[assume(n >= 1 && n <= 2000)]];
   for (int i = 1; i <= n; ++i) {
     v[i] = readInt();
   }
 
   vector<uint64_t> hash_prefix(n + 2, 0);
   vector<uint64_t> hash_suffix(n + 2, 0);
-  vector<uint64_t> hash_power(n + 2, 1);
 
   for (int i = 1; i <= n; ++i) {
-    hash_power[i] = hash_power[i - 1] * hash_base;
-    hash_prefix[i] = hash_prefix[i - 1] * hash_base + v[i];
-    hash_suffix[i] = hash_suffix[i - 1] * hash_base + v[n - i + 1];
+    hash_prefix[i] = hash_prefix[i - 1] * kHashBase + v[i];
+    hash_suffix[i] = hash_suffix[i - 1] * kHashBase + v[n - i + 1];
   }
 
-  int m = readInt();
+  const int m = readInt();
 
+  [[assume(m >= 1 && m <= 1000000)]];
   for (int i = 0; i < m; ++i) {
     int s_forward = readInt();
     int e_forward = readInt();
-    int s_backward = n - e_forward + 1;
-    int e_backward = n - s_forward + 1;
 
-    uint64_t hash_forward =
-        hash_prefix[e_forward] -
-        hash_prefix[s_forward - 1] * hash_power[e_forward - s_forward + 1];
-    uint64_t hash_backward =
-        hash_suffix[e_backward] -
-        hash_suffix[s_backward - 1] * hash_power[e_backward - s_backward + 1];
-    writeChar(hash_forward == hash_backward ? '1' : '0');
+    if (s_forward == e_forward) {
+      writeChar('1');
+    } else if (e_forward - s_forward == 2) {
+      writeChar(v[s_forward] == v[e_forward] ? '1' : '0');
+    } else {
+      int s_backward = n - e_forward + 1;
+      int e_backward = n - s_forward + 1;
+
+      uint64_t hash_forward =
+          hash_prefix[e_forward] -
+          hash_prefix[s_forward - 1] * kHashPower[e_forward - s_forward + 1];
+      uint64_t hash_backward =
+          hash_suffix[e_backward] -
+          hash_suffix[s_backward - 1] * kHashPower[e_backward - s_backward + 1];
+      writeChar(hash_forward == hash_backward ? '1' : '0');
+    }
     writeChar('\n');
   }
 
