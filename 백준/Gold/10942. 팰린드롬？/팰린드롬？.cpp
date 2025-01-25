@@ -98,23 +98,16 @@ int main() {
   for (int i = 0; i < m; ++i) {
     int s_forward = readInt();
     int e_forward = readInt();
+    int s_backward = n - e_forward + 1;
+    int e_backward = n - s_forward + 1;
 
-    if (s_forward == e_forward) {
-      writeChar('1');
-    } else if (e_forward - s_forward == 2) {
-      writeChar(v[s_forward] == v[e_forward] ? '1' : '0');
-    } else {
-      int s_backward = n - e_forward + 1;
-      int e_backward = n - s_forward + 1;
-
-      unsigned long long hash_forward =
-          hash_prefix[e_forward] -
-          hash_prefix[s_forward - 1] * kHashPower[e_forward - s_forward + 1];
-      unsigned long long hash_backward =
-          hash_suffix[e_backward] -
-          hash_suffix[s_backward - 1] * kHashPower[e_backward - s_backward + 1];
-      writeChar(hash_forward == hash_backward ? '1' : '0');
-    }
+    unsigned long long hash_forward =
+        hash_prefix[e_forward] -
+        hash_prefix[s_forward - 1] * kHashPower[e_forward - s_forward + 1];
+    unsigned long long hash_backward =
+        hash_suffix[e_backward] -
+        hash_suffix[s_backward - 1] * kHashPower[e_backward - s_backward + 1];
+    writeChar(hash_forward == hash_backward ? '1' : '0');
     writeChar('\n');
   }
 
