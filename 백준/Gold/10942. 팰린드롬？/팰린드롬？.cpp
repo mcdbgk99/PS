@@ -1,4 +1,5 @@
 #pragma GCC optimize("O3")
+#pragma comment(linker, "/STACK:336777216")
 #include <stdio.h>
 #include <unistd.h>
 
@@ -7,12 +8,12 @@
 using namespace std;
 
 inline char readChar();
-template <class T = unsigned long>
+template <class T = int>
 inline T readInt();
 inline void writeWord(const char *s);
-static const int buf_size = 1 << 22;
+static const int buf_size = 1 << 18;
+static char buf[buf_size];
 inline char getChar() {
-  static char buf[buf_size];
   static int len = 0, pos = 0;
   if (pos == len) pos = 0, len = fread(buf, 1, buf_size, stdin);
   if (pos == len) return -1;
@@ -30,7 +31,7 @@ inline T readInt() {
   while ('0' <= c && c <= '9') x = x * 10 + c - '0', c = getChar();
   return x;
 }
-constexpr int OUT_BUF_SIZE = 1 << 22;
+constexpr int OUT_BUF_SIZE = 1 << 16;
 static char out_buf[OUT_BUF_SIZE];
 static size_t out_pos = 0;
 inline void flush() {
@@ -54,19 +55,19 @@ constexpr unsigned long kCompileTimeHash(char *str, unsigned long seed = 0) {
 }
 constexpr unsigned long kDateTimeHash = kCompileTimeHash(__DATE__ __TIME__);
 constexpr unsigned long kFileHash = kCompileTimeHash(__FILE__);
-constexpr unsigned long kMakeHash(unsigned long long hash) {
-  hash ^= hash >> 16;
-  hash *= 0x9e3779b9;
-  hash ^= hash >> 16;
-  hash *= 0x85ebca6b;
-  hash ^= hash >> 16;
+constexpr unsigned long long kMakeHash(unsigned long long hash) {
+  hash ^= hash >> 33;
+  hash *= 0xff51afd7ed558ccdULL;
+  hash ^= hash >> 33;
+  hash *= 0xc4ceb9fe1a85ec53ULL;
+  hash ^= hash >> 33;
   return hash;
 }
-constexpr unsigned long kHashBase = kMakeHash(kDateTimeHash ^ kFileHash);
-constexpr unsigned long kMaxN = 2000;
+constexpr unsigned long long kHashBase = kMakeHash(kDateTimeHash ^ kFileHash);
+constexpr int kMaxN = 2000;
 
 constexpr auto kMakeHashPower() {
-  array<unsigned long, kMaxN + 2> arr{1};
+  array<unsigned long long, kMaxN + 2> arr{1};
   for (int i = 1; i <= kMaxN; ++i) {
     arr[i] = arr[i - 1] * kHashBase;
   }
@@ -75,40 +76,36 @@ constexpr auto kMakeHashPower() {
 constexpr auto kHashPower = kMakeHashPower();
 
 int main() {
-  const unsigned long n = readInt();
+  const int n = readInt();
 
-  vector<unsigned long> v(n + 1);
+  array<int, kMaxN + 1> v{};
 
   [[assume(n >= 1 && n <= 2000)]];
-  for (unsigned long i = 1; i <= n; ++i) {
+  for (int i = 1; i <= n; ++i) {
     v[i] = readInt();
   }
 
-  vector<unsigned long> hash_prefix;
-  vector<unsigned long> hash_suffix;
-  hash_prefix.reserve(n + 2);
-  hash_suffix.reserve(n + 2);
-  hash_prefix[0] = 0;
-  hash_suffix[0] = 0;
+  array<unsigned long long, kMaxN + 2> hash_prefix{};
+  array<unsigned long long, kMaxN + 2> hash_suffix{};
 
-  for (unsigned long i = 1; i <= n; ++i) {
+  for (int i = 1; i <= n; ++i) {
     hash_prefix[i] = hash_prefix[i - 1] * kHashBase + v[i];
     hash_suffix[i] = hash_suffix[i - 1] * kHashBase + v[n - i + 1];
   }
 
-  const unsigned long m = readInt();
+  const int m = readInt();
 
   [[assume(m >= 1 && m <= 1000000)]];
-  for (unsigned long i = 0; i < m; ++i) {
-    unsigned long s_forward = readInt();
-    unsigned long e_forward = readInt();
-    unsigned long s_backward = n - e_forward + 1;
-    unsigned long e_backward = n - s_forward + 1;
+  for (int i = 0; i < m; ++i) {
+    int s_forward = readInt();
+    int e_forward = readInt();
+    int s_backward = n - e_forward + 1;
+    int e_backward = n - s_forward + 1;
 
-    unsigned long hash_forward =
+    unsigned long long hash_forward =
         hash_prefix[e_forward] -
         hash_prefix[s_forward - 1] * kHashPower[e_forward - s_forward + 1];
-    unsigned long hash_backward =
+    unsigned long long hash_backward =
         hash_suffix[e_backward] -
         hash_suffix[s_backward - 1] * kHashPower[e_backward - s_backward + 1];
     writeChar(hash_forward == hash_backward ? '1' : '0');
