@@ -11,19 +11,11 @@ void Union(vector<int>& points, int a, int b) {
 }
 
 int Find(vector<int>& points, int x) {
-  int root = x;
-
-  while (points[root] >= 0) {
-    root = points[root];
+  if (points[x] < 0) {
+    return x;
   }
 
-  while (root != x) {
-    int next = points[x];
-    points[x] = root;
-    x = next;
-  }
-
-  return root;
+  return points[x] = Find(points, points[x]);
 }
 
 int main() {
