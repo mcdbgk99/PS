@@ -5,52 +5,46 @@ array<array<int8_t, 9>, 9> board;
 array<array<bitset<9 + 1>, 9>, 3> mask;
 
 bool Solve() {
-  bool solved = true;
+  int empty_x = -1;
+  int empty_y = -1;
+
   for (int y = 0; y < 9; ++y) {
     for (int x = 0; x < 9; ++x) {
       if (board[x][y] == 0) {
-        solved = false;
+        empty_x = x;
+        empty_y = y;
         break;
       }
     }
 
-    if (!solved) {
+    if (empty_x != -1) {
       break;
     }
   }
 
-  if (solved) {
+  if (empty_x == -1) {
     return true;
   }
 
-  for (int y = 0; y < 9; ++y) {
-    for (int x = 0; x < 9; ++x) {
-      if (board[x][y] != 0) {
-        continue;
-      }
-
-      for (int i = 1; i <= 9; ++i) {
-        if (mask[0][y][i] || mask[1][x][i] || mask[2][x / 3 + y / 3 * 3][i]) {
-          continue;
-        }
-
-        board[x][y] = i;
-        mask[0][y][i] = 1;
-        mask[1][x][i] = 1;
-        mask[2][x / 3 + y / 3 * 3][i] = 1;
-
-        if (Solve()) {
-          return true;
-        }
-
-        board[x][y] = 0;
-        mask[0][y][i] = 0;
-        mask[1][x][i] = 0;
-        mask[2][x / 3 + y / 3 * 3][i] = 0;
-      }
-
-      return false;
+  for (int i = 1; i <= 9; ++i) {
+    if (mask[0][empty_y][i] || mask[1][empty_x][i] ||
+        mask[2][empty_x / 3 + empty_y / 3 * 3][i]) {
+      continue;
     }
+
+    board[empty_x][empty_y] = i;
+    mask[0][empty_y][i] = 1;
+    mask[1][empty_x][i] = 1;
+    mask[2][empty_x / 3 + empty_y / 3 * 3][i] = 1;
+
+    if (Solve()) {
+      return true;
+    }
+
+    board[empty_x][empty_y] = 0;
+    mask[0][empty_y][i] = 0;
+    mask[1][empty_x][i] = 0;
+    mask[2][empty_x / 3 + empty_y / 3 * 3][i] = 0;
   }
 
   return false;
