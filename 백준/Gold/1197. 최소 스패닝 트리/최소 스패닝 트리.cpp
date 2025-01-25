@@ -11,11 +11,19 @@ void Union(vector<int>& points, int a, int b) {
 }
 
 int Find(vector<int>& points, int x) {
-  while (points[x] >= 0) {
-    x = points[x];
+  int root = x;
+
+  while (points[root] >= 0) {
+    root = points[root];
   }
 
-  return x;
+  while (root != x) {
+    int next = points[x];
+    points[x] = root;
+    x = next;
+  }
+
+  return root;
 }
 
 int main() {
@@ -40,7 +48,8 @@ int main() {
          return left[2] < right[2];
        });
 
-  array<int64_t, 2> result = {0, 0};
+  int64_t result = 0;
+  int count = 0;
 
   for (int i = 0; i < e; ++i) {
     auto [a, b, c] = edges[i];
@@ -49,18 +58,17 @@ int main() {
     b = Find(points, b);
 
     if (a != b) {
-      result[0] += c;
-      ++result[1];
+      result += c;
 
       Union(points, a, b);
-    }
 
-    if (result[1] >= v - 1) {
-      break;
+      if (++count == v - 1) {
+        break;
+      }
     }
   }
 
-  cout << result[0];
+  cout << result;
 
   return 0;
 }
