@@ -11,38 +11,24 @@ inline void writeChar(int x);
 inline void writeWord(const char *s);
 static const int buf_size = 1 << 18;
 inline int getChar() {
-#ifndef LOCAL
   static char buf[buf_size];
   static int len = 0, pos = 0;
   if (pos == len) pos = 0, len = fread(buf, 1, buf_size, stdin);
   if (pos == len) return -1;
   return buf[pos++];
-#endif
 }
 inline int readChar() {
-#ifndef LOCAL
   int c = getChar();
   while (c <= 32) c = getChar();
   return c;
-#else
-  char c;
-  cin >> c;
-  return c;
-#endif
 }
 template <class T>
 inline T readInt() {
-#ifndef LOCAL
   int s = 1, c = readChar();
   T x = 0;
   if (c == '-') s = -1, c = getChar();
   while ('0' <= c && c <= '9') x = x * 10 + c - '0', c = getChar();
   return s == 1 ? x : -x;
-#else
-  T x;
-  cin >> x;
-  return x;
-#endif
 }
 static int write_pos = 0;
 static char write_buf[buf_size];
@@ -106,11 +92,7 @@ int main() {
     uint64_t hash_backward =
         hash_suffix[e_backward] -
         hash_suffix[s_backward - 1] * hash_power[e_backward - s_backward + 1];
-    if (hash_forward == hash_backward) {
-      writeChar('1');
-    } else {
-      writeChar('0');
-    }
+    writeChar(hash_forward == hash_backward ? '1' : '0');
     writeChar('\n');
   }
 
