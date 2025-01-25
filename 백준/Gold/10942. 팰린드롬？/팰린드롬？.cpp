@@ -1,5 +1,4 @@
 #pragma GCC optimize("O3")
-#pragma comment(linker, "/STACK:336777216").
 #include <stdio.h>
 #include <unistd.h>
 
@@ -11,7 +10,7 @@ inline char readChar();
 template <class T = unsigned long>
 inline T readInt();
 inline void writeWord(const char *s);
-static const int buf_size = 1 << 18;
+static const int buf_size = 1 << 22;
 inline char getChar() {
   static char buf[buf_size];
   static int len = 0, pos = 0;
@@ -31,7 +30,7 @@ inline T readInt() {
   while ('0' <= c && c <= '9') x = x * 10 + c - '0', c = getChar();
   return x;
 }
-constexpr int OUT_BUF_SIZE = 1 << 16;
+constexpr int OUT_BUF_SIZE = 1 << 22;
 static char out_buf[OUT_BUF_SIZE];
 static size_t out_pos = 0;
 inline void flush() {
@@ -64,7 +63,7 @@ constexpr unsigned long kMakeHash(unsigned long long hash) {
   return hash;
 }
 constexpr unsigned long kHashBase = kMakeHash(kDateTimeHash ^ kFileHash);
-constexpr int kMaxN = 2000;
+constexpr unsigned long kMaxN = 2000;
 
 constexpr auto kMakeHashPower() {
   array<unsigned long, kMaxN + 2> arr{1};
@@ -78,15 +77,19 @@ constexpr auto kHashPower = kMakeHashPower();
 int main() {
   const unsigned long n = readInt();
 
-  array<unsigned long, kMaxN + 1> v{};
+  vector<unsigned long> v(n + 1);
 
   [[assume(n >= 1 && n <= 2000)]];
   for (unsigned long i = 1; i <= n; ++i) {
     v[i] = readInt();
   }
 
-  array<unsigned long, kMaxN + 2> hash_prefix{};
-  array<unsigned long, kMaxN + 2> hash_suffix{};
+  vector<unsigned long> hash_prefix;
+  vector<unsigned long> hash_suffix;
+  hash_prefix.reserve(n + 2);
+  hash_suffix.reserve(n + 2);
+  hash_prefix[0] = 0;
+  hash_suffix[0] = 0;
 
   for (unsigned long i = 1; i <= n; ++i) {
     hash_prefix[i] = hash_prefix[i - 1] * kHashBase + v[i];
