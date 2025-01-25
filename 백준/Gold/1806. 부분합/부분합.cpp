@@ -8,7 +8,7 @@ int main() {
   int n, s;
   cin >> n >> s;
 
-  vector<int> v(n);
+  vector<int16_t> v(n);
 
   for (int i = 0; i < n; ++i) {
     cin >> v[i];
