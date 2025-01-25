@@ -1,4 +1,5 @@
 #pragma GCC optimize("O3")
+#pragma comment(linker, "/STACK:336777216").
 #include <stdio.h>
 #include <unistd.h>
 
@@ -77,15 +78,15 @@ constexpr auto kHashPower = kMakeHashPower();
 int main() {
   const int n = readInt();
 
-  vector<int> v(n + 1);
+  array<int, kMaxN + 1> v{};
 
   [[assume(n >= 1 && n <= 2000)]];
   for (int i = 1; i <= n; ++i) {
     v[i] = readInt();
   }
 
-  vector<unsigned long long> hash_prefix(n + 2, 0);
-  vector<unsigned long long> hash_suffix(n + 2, 0);
+  array<unsigned long long, kMaxN + 2> hash_prefix{};
+  array<unsigned long long, kMaxN + 2> hash_suffix{};
 
   for (int i = 1; i <= n; ++i) {
     hash_prefix[i] = hash_prefix[i - 1] * kHashBase + v[i];
