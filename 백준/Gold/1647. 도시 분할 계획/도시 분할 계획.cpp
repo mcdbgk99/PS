@@ -26,17 +26,14 @@ int main() {
   cin >> n >> m;
 
   vector<int> points(n + 1, -1);
-  vector<tuple<int, int, int>> edges;
-  edges.reserve(m);
+  vector<tuple<int, int, int>> edges(m);
 
   for (int i = 0; i < m; ++i) {
-    int a, b, c;
-    cin >> a >> b >> c;
-    edges.emplace_back(a, b, c);
+    cin >> get<0>(edges[i]) >> get<1>(edges[i]) >> get<2>(edges[i]);
   }
 
   sort(edges.begin(), edges.end(),
-       [](tuple<int, int, int>& left, tuple<int, int, int>& right) {
+       [](const tuple<int, int, int>& left, const tuple<int, int, int>& right) {
          return get<2>(left) < get<2>(right);
        });
 
