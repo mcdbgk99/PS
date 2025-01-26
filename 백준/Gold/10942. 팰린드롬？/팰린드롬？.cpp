@@ -1,115 +1,49 @@
-#pragma GCC optimize("O3")
-#pragma comment(linker, "/STACK:336777216")
-#include <stdio.h>
-#include <unistd.h>
-
-#include <array>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
-inline char readChar();
-template <class T = size_t>
-inline T readInt();
-inline void writeWord(const char *s);
-static const size_t buf_size = 1 << 18;
-static char buf[buf_size];
-inline char getChar() {
-  static size_t len = 0, pos = 0;
-  if (pos == len) pos = 0, len = fread(buf, 1, buf_size, stdin);
-  if (pos == len) return -1;
-  return buf[pos++];
-}
-inline char readChar() {
-  char c = getChar();
-  while (c <= 32) c = getChar();
-  return c;
-}
-template <class T>
-inline T readInt() {
-  char c = readChar();
-  T x = 0;
-  while ('0' <= c && c <= '9') x = x * 10 + c - '0', c = getChar();
-  return x;
-}
-constexpr size_t OUT_BUF_SIZE = 1 << 21;
-static char out_buf[OUT_BUF_SIZE];
-static size_t out_pos = 0;
-inline void flush() {
-  if (out_pos == 0) return;
-  write(STDOUT_FILENO, out_buf, out_pos);
-  out_pos = 0;
-}
-inline void writeChar(char c) { out_buf[out_pos++] = c; }
-inline void writeWord(const char *s) {
-  while (*s) writeChar(*s++);
-}
-struct Flusher {
-  ~Flusher() { flush(); }
-} flusher;
-
-constexpr unsigned long kCompileTimeHash(char *str, unsigned long seed = 0) {
-  return *str ? kCompileTimeHash(str + 1, seed * 88848 + *str) : seed;
-}
-constexpr unsigned long kDateTimeHash = kCompileTimeHash(__DATE__ __TIME__);
-constexpr unsigned long kFileHash = kCompileTimeHash(__FILE__);
-constexpr unsigned long long kMakeHash(unsigned long long hash) {
-  hash ^= hash >> 33;
-  hash *= 0xff51afd7ed558ccdULL;
-  hash ^= hash >> 33;
-  hash *= 0xc4ceb9fe1a85ec53ULL;
-  hash ^= hash >> 33;
-  return hash;
-}
-constexpr unsigned long long kHashBase = kMakeHash(kDateTimeHash ^ kFileHash);
-constexpr size_t kMaxN = 2000;
-
-constexpr auto kMakeHashPower() {
-  array<unsigned long long, kMaxN + 2> arr{1};
-  for (int i = 1; i <= kMaxN; ++i) {
-    arr[i] = arr[i - 1] * kHashBase;
-  }
-  return arr;
-}
-constexpr auto kHashPower = kMakeHashPower();
-
 int main() {
-  const size_t n = readInt();
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
 
-  array<int, kMaxN + 1> v{};
+  mt19937 gen(chrono::steady_clock::now().time_since_epoch().count());
+  uniform_int_distribution<> dist(0x10203040, 0x50607080);
+  uint64_t hash_base = dist(gen);
 
-  [[assume(n >= 1 && n <= 2000)]];
-  for (size_t i = 1; i <= n; ++i) {
-    v[i] = readInt();
+  int n;
+  cin >> n;
+
+  vector<int> v(n + 1);
+
+  for (int i = 1; i <= n; ++i) {
+    cin >> v[i];
   }
 
-  array<unsigned long long, kMaxN + 2> hash_prefix{};
-  array<unsigned long long, kMaxN + 2> hash_suffix{};
+  vector<uint64_t> hash_prefix(n + 2, 0);
+  vector<uint64_t> hash_suffix(n + 2, 0);
+  vector<uint64_t> hash_power(n + 2, 1);
 
-  for (size_t i = 1; i <= n; ++i) {
-    hash_prefix[i] = hash_prefix[i - 1] * kHashBase + v[i];
-    hash_suffix[i] = hash_suffix[i - 1] * kHashBase + v[n - i + 1];
+  for (int i = 1; i <= n; ++i) {
+    hash_power[i] = hash_power[i - 1] * hash_base;
+    hash_prefix[i] = hash_prefix[i - 1] * hash_base + v[i];
+    hash_suffix[i] = hash_suffix[i - 1] * hash_base + v[n - i + 1];
   }
 
-  const size_t m = readInt();
+  int m;
+  cin >> m;
 
-  [[assume(m >= 1 && m <= 1000000)]];
-  for (size_t i = 0; i < m; ++i) {
-    size_t s_forward = readInt();
-    size_t e_forward = readInt();
-    size_t s_backward = n - e_forward + 1;
-    size_t e_backward = n - s_forward + 1;
+  for (int i = 0; i < m; ++i) {
+    int s_forward, e_forward;
+    cin >> s_forward >> e_forward;
+    int s_backward = n - e_forward + 1;
+    int e_backward = n - s_forward + 1;
+    int len = e_forward - s_forward + 1;
 
-    unsigned long long hash_forward =
-        hash_prefix[e_forward] -
-        hash_prefix[s_forward - 1] * kHashPower[e_forward - s_forward + 1];
-    unsigned long long hash_backward =
-        hash_suffix[e_backward] -
-        hash_suffix[s_backward - 1] * kHashPower[e_backward - s_backward + 1];
-    writeChar(hash_forward == hash_backward ? '1' : '0');
-    writeChar('\n');
+    uint64_t hash_forward =
+        hash_prefix[e_forward] - hash_prefix[s_forward - 1] * hash_power[len];
+    uint64_t hash_backward =
+        hash_suffix[e_backward] - hash_suffix[s_backward - 1] * hash_power[len];
+    cout << (hash_forward == hash_backward) << "\n";
   }
-
-  flush();
 
   return 0;
 }
