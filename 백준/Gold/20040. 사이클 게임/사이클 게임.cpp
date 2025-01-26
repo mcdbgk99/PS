@@ -12,7 +12,7 @@ inline T readInt();
 template <class T>
 inline void writeInt(T x, char end = 0);
 inline void writeWord(const char* s);
-static const size_t buf_size = 1 << 18;
+static const size_t buf_size = 1 << 17;
 static char buf[buf_size];
 inline char getChar() {
   static size_t len = 0, pos = 0;
@@ -57,7 +57,7 @@ struct Flusher {
   ~Flusher() { flush(); }
 } flusher;
 
-void Union(vector<int>& points, int a, int b) {
+inline void Union(vector<int>& points, int a, int b) {
   if (points[a] > points[b]) {
     swap(a, b);
   }
@@ -66,12 +66,15 @@ void Union(vector<int>& points, int a, int b) {
   points[b] = a;
 }
 
-int Find(vector<int>& points, int x) {
-  if (points[x] < 0) {
-    return x;
+inline int Find(vector<int>& points, int x) {
+  while (points[x] >= 0) {
+    int p = points[x];
+    if (points[p] >= 0) {
+      points[x] = points[p];
+    }
+    x = p;
   }
-
-  return points[x] = Find(points, points[x]);
+  return x;
 }
 
 int main() {
@@ -79,8 +82,6 @@ int main() {
   int m = readInt();
 
   vector<int> points(n, -1);
-
-  int result = 0;
 
   for (int i = 1; i <= m; i++) {
     int a = readInt();
@@ -97,7 +98,7 @@ int main() {
     Union(points, a, b);
   }
 
-  writeInt(0);
+  writeChar('0');
   flush();
 
   return 0;
