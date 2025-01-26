@@ -1,6 +1,7 @@
 #pragma GCC optimize("O3")
 #include <stdio.h>
 
+#include <algorithm>
 #include <deque>
 #include <vector>
 using namespace std;
@@ -58,6 +59,11 @@ struct Flusher {
   }
 } flusher;
 
+vector<int> costs;
+vector<vector<int>> nodes;
+vector<int> in_degree;
+vector<int> result;
+
 int main() {
   int t = readInt();
 
@@ -65,9 +71,10 @@ int main() {
     int n = readInt();
     int k = readInt();
 
-    vector<int> costs(n + 1);
-    vector<vector<int>> nodes(n + 1, vector<int>());
-    vector<int> in_degree(n + 1, 0);
+    costs.resize(n + 1);
+    nodes.assign(n + 1, vector<int>());
+    in_degree.assign(n + 1, 0);
+    result.assign(n + 1, 0);
 
     for (int i = 1; i <= n; ++i) {
       costs[i] = readInt();
@@ -82,7 +89,6 @@ int main() {
 
     int w = readInt();
 
-    vector<int> result(n + 1, 0);
     deque<int> dq;
     for (int i = 1; i <= n; ++i) {
       if (in_degree[i] == 0) {
