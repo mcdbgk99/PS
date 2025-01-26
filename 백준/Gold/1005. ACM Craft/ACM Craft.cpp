@@ -67,6 +67,7 @@ int main() {
 
     vector<int> costs(n + 1);
     vector<vector<int>> nodes(n + 1, vector<int>());
+    vector<int> in_degree(n + 1, 0);
 
     for (int i = 1; i <= n; ++i) {
       costs[i] = readInt();
@@ -75,39 +76,39 @@ int main() {
     for (int i = 0; i < k; ++i) {
       int x = readInt();
       int y = readInt();
-      nodes[y].push_back(x);
+      nodes[x].push_back(y);
+      in_degree[y]++;
     }
 
     int w = readInt();
 
-    vector<int> dp(n + 1, -1);
-    deque<tuple<int, bool>> dq;
-
-    dq.push_back({w, false});
+    vector<int> result(n + 1, 0);
+    deque<int> dq;
+    for (int i = 1; i <= n; ++i) {
+      if (in_degree[i] == 0) {
+        dq.push_back(i);
+        result[i] = costs[i];
+      }
+    }
 
     while (!dq.empty()) {
-      auto [now_node, now_built] = dq.back();
-      dq.pop_back();
+      auto now_node = dq.front();
+      dq.pop_front();
 
-      if (now_built) {
-        int max_cost = 0;
-        for (int new_node : nodes[now_node]) {
-          max_cost = max(max_cost, dp[new_node]);
-        }
-        dp[now_node] = max_cost + costs[now_node];
-      } else {
-        if (dp[now_node] != -1) {
-          continue;
-        }
+      if (now_node == w) {
+        break;
+      }
 
-        dq.push_back({now_node, true});
-        for (int i = nodes[now_node].size() - 1; i >= 0; --i) {
-          dq.push_back({nodes[now_node][i], false});
+      for (int new_node : nodes[now_node]) {
+        result[new_node] =
+            max(result[new_node], result[now_node] + costs[new_node]);
+        if (--in_degree[new_node] == 0) {
+          dq.push_back(new_node);
         }
       }
     }
 
-    writeInt(dp[w], '\n');
+    writeInt(result[w], '\n');
   }
 
   return 0;
