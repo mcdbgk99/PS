@@ -32,7 +32,7 @@ inline T readInt() {
   while ('0' <= c && c <= '9') x = x * 10 + c - '0', c = getChar();
   return x;
 }
-constexpr size_t OUT_BUF_SIZE = 1 << 21;
+constexpr size_t OUT_BUF_SIZE = 1 << 8;
 static char out_buf[OUT_BUF_SIZE];
 static size_t out_pos = 0;
 inline void flush() {
@@ -90,6 +90,7 @@ int main() {
 
     if (a == b) {
       writeInt(i);
+      flush();
       return 0;
     }
 
@@ -97,6 +98,7 @@ int main() {
   }
 
   writeInt(0);
+  flush();
 
   return 0;
 }
