@@ -13,7 +13,7 @@ template <class T>
 inline void writeInt(T x, char end = 0);
 inline void writeChar(int x);
 inline void writeWord(const char *s);
-static const int buf_size = 1 << 18;
+static const int buf_size = 1 << 22;
 inline int getChar() {
   static char buf[buf_size];
   static int len = 0, pos = 0;
@@ -60,19 +60,19 @@ struct Flusher {
 } flusher;
 
 vector<int> costs;
-vector<vector<int>> nodes;
-vector<int> in_degree;
+vector<vector<short>> nodes;
+vector<short> in_degree;
 vector<int> result;
 
 int main() {
   int t = readInt();
 
   while (t--) {
-    int n = readInt();
+    short n = readInt<short>();
     int k = readInt();
 
     costs.resize(n + 1);
-    nodes.assign(n + 1, vector<int>());
+    nodes.assign(n + 1, vector<short>());
     in_degree.assign(n + 1, 0);
     result.assign(n + 1, 0);
 
@@ -81,15 +81,15 @@ int main() {
     }
 
     for (int i = 0; i < k; ++i) {
-      int x = readInt();
-      int y = readInt();
+      short x = readInt<short>();
+      short y = readInt<short>();
       nodes[x].push_back(y);
       in_degree[y]++;
     }
 
-    int w = readInt();
+    short w = readInt<short>();
 
-    deque<int> dq;
+    deque<short> dq;
     for (int i = 1; i <= n; ++i) {
       if (in_degree[i] == 0) {
         dq.push_back(i);
@@ -98,7 +98,7 @@ int main() {
     }
 
     while (!dq.empty()) {
-      auto now_node = dq.front();
+      short now_node = dq.front();
       dq.pop_front();
 
       if (now_node == w) {
