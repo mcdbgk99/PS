@@ -21,26 +21,13 @@ int main() {
   }
 
   for (int i = 1; i < kMax; ++i) {
-    if (!bs[i]) {
-      continue;
-    }
+    if (!bs[i]) continue;
 
     for (int j = i; j < kMax; j += i) {
       ++divs[j];
-    }
-  }
-
-  for (int i = 1; i < kMax; ++i) {
-    if (!bs[i]) {
-      continue;
-    }
-
-    for (int j = i * 2; j < kMax; j += i) {
-      if (!bs[j]) {
-        continue;
+      if (j != i && bs[j]) {
+        ++muls[i];
       }
-
-      ++muls[i];
     }
   }
 
