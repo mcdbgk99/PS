@@ -14,8 +14,8 @@ const vector<array<int, 5>> kPath = {
     {28, 15, 16, 17, 18}, {15, 16, 17, 18, 19}, {-1, -1, -1, -1, -1},
 };
 
-const array<int, 69> kCharToPlayer = [] {
-  std::array<int, 69> arr = {};
+const array<int, 101> kCharToPlayer = [] {
+  std::array<int, 101> arr = {};
   arr['A'] = 0;
   arr['B'] = 1;
   arr['C'] = 2;
