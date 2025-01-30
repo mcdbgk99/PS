@@ -14,24 +14,26 @@ int main() {
     cin >> a[i] >> b[i] >> c[i] >> d[i];
   }
 
-  unordered_map<int64_t, int> sum_ab;
-  sum_ab.reserve(n * n);
+  auto start = chrono::high_resolution_clock::now();
 
-  for (int i : a) {
-    for (int j : b) {
-      ++sum_ab[i + j];
+  vector<int> sum_ab, sum_cd;
+  sum_ab.reserve(n * n);
+  sum_cd.reserve(n * n);
+
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      sum_ab.push_back(a[i] + b[j]);
+      sum_cd.push_back(c[i] + d[j]);
     }
   }
 
+  sort(sum_cd.begin(), sum_cd.end());
+
   int64_t result = 0;
 
-  for (int i : c) {
-    for (int j : d) {
-      auto it = sum_ab.find(-(i + j));
-      if (it != sum_ab.end()) {
-        result += it->second;
-      }
-    }
+  for (int ab : sum_ab) {
+    auto [lower, upper] = equal_range(sum_cd.begin(), sum_cd.end(), -ab);
+    result += upper - lower;
   }
 
   cout << result;
