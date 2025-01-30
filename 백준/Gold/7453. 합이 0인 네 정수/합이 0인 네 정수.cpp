@@ -5,10 +5,10 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int64_t n;
+  int16_t n;
   cin >> n;
 
-  vector<int64_t> a(n), b(n), c(n), d(n);
+  vector<int> a(n), b(n), c(n), d(n);
 
   for (int i = 0; i < n; ++i) {
     cin >> a[i] >> b[i] >> c[i] >> d[i];
