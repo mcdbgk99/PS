@@ -14,21 +14,21 @@ int main() {
     cin >> a[i] >> b[i] >> c[i] >> d[i];
   }
 
-  unordered_map<int64_t, int> s_ab;
-  s_ab.reserve(n * n);
+  unordered_map<int64_t, int> sum_ab;
+  sum_ab.reserve(n * n);
 
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      ++s_ab[a[i] + b[j]];
+  for (int i : a) {
+    for (int j : b) {
+      ++sum_ab[i + j];
     }
   }
 
   int64_t result = 0;
 
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      auto it = s_ab.find(0 - (c[i] + d[j]));
-      if (it != s_ab.end()) {
+  for (int i : c) {
+    for (int j : d) {
+      auto it = sum_ab.find(-(i + j));
+      if (it != sum_ab.end()) {
         result += it->second;
       }
     }
