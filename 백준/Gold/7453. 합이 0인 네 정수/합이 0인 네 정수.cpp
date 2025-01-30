@@ -16,13 +16,11 @@ int main() {
 
   auto start = chrono::high_resolution_clock::now();
 
-  vector<int> sum_ab, sum_cd;
-  sum_ab.reserve(n * n);
+  vector<int> sum_cd;
   sum_cd.reserve(n * n);
 
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
-      sum_ab.push_back(a[i] + b[j]);
       sum_cd.push_back(c[i] + d[j]);
     }
   }
@@ -31,9 +29,12 @@ int main() {
 
   int64_t result = 0;
 
-  for (int ab : sum_ab) {
-    auto [lower, upper] = equal_range(sum_cd.begin(), sum_cd.end(), -ab);
-    result += upper - lower;
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      int ab = a[i] + b[j];
+      auto [lower, upper] = equal_range(sum_cd.begin(), sum_cd.end(), -ab);
+      result += upper - lower;
+    }
   }
 
   cout << result;
