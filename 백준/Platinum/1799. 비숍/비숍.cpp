@@ -24,12 +24,12 @@ class DancingLinks {
   }
 
   DancingLinks(int cols) {
-    up.resize(30000);
-    down.resize(30000);
-    left.resize(30000);
-    right.resize(30000);
-    column.resize(30000);
-    row_id.resize(30000);
+    up.resize(3000);
+    down.resize(3000);
+    left.resize(3000);
+    right.resize(3000);
+    column.resize(3000);
+    row_id.resize(3000);
     header_size.resize(cols + 1, 0);
     column_count = cols;
     node_count = cols + 1;
@@ -100,7 +100,8 @@ class DancingLinks {
   }
 };
 
-int Dfs(DancingLinks& dlx, int& best, int now, vector<bool>& is_dummy_row) {
+int Backtrack(DancingLinks& dlx, int& best, int now,
+              vector<int>& is_dummy_row) {
   if (dlx.right[0] == 0) {
     return min(best, now);
   }
@@ -125,7 +126,7 @@ int Dfs(DancingLinks& dlx, int& best, int now, vector<bool>& is_dummy_row) {
       dlx.Cover(dlx.column[i]);
     }
 
-    best = Dfs(dlx, best, now + added, is_dummy_row);
+    best = Backtrack(dlx, best, now + added, is_dummy_row);
 
     for (int i = dlx.right[row]; i != row; i = dlx.right[i]) {
       dlx.Uncover(dlx.column[i]);
@@ -156,13 +157,13 @@ int main() {
   int dlx_size = 4 * board_size - 2;
 
   DancingLinks dlx(dlx_size);
-  vector<bool> is_dummy_row;
+  vector<int> is_dummy_row;
   int row_index = 0;
 
   for (int i = 0; i < board_size; ++i) {
     for (int j = 0; j < board_size; ++j) {
       if (board[i][j]) {
-        is_dummy_row.push_back(false);
+        is_dummy_row.push_back(0);
         int forward = (i - j) + board_size;
         int backward = (i + j) + 2 * board_size;
         dlx.AddMatrixRow(++row_index, {forward, backward});
@@ -171,12 +172,12 @@ int main() {
   }
 
   for (int i = 1; i <= dlx_size; ++i) {
-    is_dummy_row.push_back(true);
+    is_dummy_row.push_back(1);
     dlx.AddMatrixRow(++row_index, {i});
   }
 
   int dummy = INT_MAX;
-  Dfs(dlx, dummy, 0, is_dummy_row);
+  Backtrack(dlx, dummy, 0, is_dummy_row);
 
   cout << (dlx_size - dummy) / 2;
 
