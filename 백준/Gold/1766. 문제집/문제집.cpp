@@ -15,7 +15,7 @@ int main() {
     int a, b;
     cin >> a >> b;
     v[a].push_back(b);
-    in_degree[b]++;
+    ++in_degree[b];
   }
 
   priority_queue<int, vector<int>, greater<int>> pq;
@@ -26,6 +26,7 @@ int main() {
   }
 
   vector<int> result;
+  result.reserve(n);
 
   while (!pq.empty()) {
     int now_node = pq.top();
