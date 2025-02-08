@@ -11,7 +11,7 @@ int main() {
   int n, p, s, e;
   cin >> n >> p >> s >> e;
 
-  vector<vector<tuple<int, char>>> graph(n + 1);
+  vector<vector<tuple<int16_t, char>>> graph(n + 1);
 
   for (int i = 1; i <= n; ++i) {
     graph[i].push_back({i == n ? 1 : i + 1, 1});
@@ -28,7 +28,7 @@ int main() {
   }
 
   vector<vector<bool>> visited(n + 1, vector<bool>(n, false));
-  deque<tuple<int, int, char>> dq;
+  deque<tuple<int16_t, int, char>> dq;
 
   visited[s][1 % n] = true;
   dq.push_back({s, 1, 1});
