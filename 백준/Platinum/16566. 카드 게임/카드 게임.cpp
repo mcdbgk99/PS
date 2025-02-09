@@ -1,6 +1,35 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+void RadixSort(vector<int> &v) {
+  const int b = 8;
+  const int bits = 32;
+  const int buckets = 1 << b;
+  const int n = v.size();
+
+  vector<int> temp(n);
+
+  for (int shift = 0; shift < bits; shift += b) {
+    vector<int> count(buckets, 0);
+
+    for (int i = 0; i < n; ++i) {
+      int digit = (v[i] >> shift) & (buckets - 1);
+      ++count[digit];
+    }
+
+    for (int i = 1; i < buckets; ++i) {
+      count[i] += count[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; --i) {
+      int digit = (v[i] >> shift) & (buckets - 1);
+      temp[--count[digit]] = v[i];
+    }
+
+    v.swap(temp);
+  }
+}
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -15,7 +44,7 @@ int main() {
     cin >> cards[i];
   }
 
-  sort(cards.begin(), cards.end());
+  RadixSort(cards);
 
   for (int i = 0; i < k; ++i) {
     int x;
