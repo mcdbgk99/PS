@@ -37,13 +37,15 @@ int main() {
         continue;
       }
 
-      if (mask[v[new_y][new_x] - 'A']) {
+      int j = v[new_y][new_x] - 'A';
+
+      if (mask[j]) {
         continue;
       }
 
-      mask[v[new_y][new_x] - 'A'] = 1;
+      mask[j] = 1;
       dq.push_back({new_y, new_x, mask});
-      mask[v[new_y][new_x] - 'A'] = 0;
+      mask[j] = 0;
     }
   }
 
