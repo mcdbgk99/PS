@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-constexpr int kMaxN = 5000;
 constexpr auto kTsumo = "Tsumo";
 constexpr auto kRyuukyoku = "Ryuukyoku";
 
@@ -28,10 +27,10 @@ int main() {
     }
   }
 
-  vector<bitset<kMaxN>> visited(n + 1);
+  vector<vector<bool>> visited(n + 1, vector<bool>(n, false));
   deque<tuple<int16_t, int, char>> dq;
 
-  visited[s][1 % n] = 1;
+  visited[s][1 % n] = true;
   dq.push_back({s, 1, 1});
 
   while (!dq.empty()) {
@@ -58,7 +57,7 @@ int main() {
       if (visited[new_node][new_cost_mod]) {
         continue;
       }
-      visited[new_node][new_cost_mod] = 1;
+      visited[new_node][new_cost_mod] = true;
 
       if (is_draw != 0) {
         dq.push_back({new_node, new_cost, is_draw});
