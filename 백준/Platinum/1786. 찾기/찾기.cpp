@@ -24,11 +24,13 @@ int main() {
   }
 
   uint64_t hash_p = 0;
+
   for (int i = 1; i <= m; ++i) {
     hash_p = (hash_p * hash_base + p[i - 1]) % kMod;
   }
 
   vector<int> result;
+
   for (int i = 1; i <= n - m + 1; ++i) {
     uint64_t hash = (kMod + hash_prefix[i + m - 1] -
                      hash_prefix[i - 1] * hash_power[m] % kMod) %
