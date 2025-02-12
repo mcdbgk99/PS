@@ -1,37 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void SortVector(vector<array<int64_t, 2>>& v) {
-  const int b = 16;
-  const int bits = 64;
-  const int buckets = 1 << b;
-  const int n = v.size();
-
-  vector<array<int64_t, 2>> aux(n);
-
-  for (int i = 0; i < bits; i += b) {
-    vector<int> count(buckets + 1, 0);
-
-    for (int j = 0; j < n; ++j) {
-      uint64_t key = static_cast<uint64_t>(v[j][1]);
-      int digit = (key >> i) & (buckets - 1);
-      ++count[digit + 1];
-    }
-
-    for (int d = 0; d < buckets; ++d) {
-      count[d + 1] += count[d];
-    }
-
-    for (int j = 0; j < n; ++j) {
-      uint64_t key = static_cast<uint64_t>(v[j][1]);
-      int digit = (key >> i) & (buckets - 1);
-      aux[count[digit]++] = v[j];
-    }
-
-    v.swap(aux);
-  }
-}
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -111,6 +80,7 @@ int main() {
     }
 
     vector<int64_t> verify;
+    verify.reserve(n + m + 2);
     verify.push_back(1);
     verify.push_back(part_sum);
 
@@ -129,21 +99,22 @@ int main() {
     sort(verify.begin(), verify.end());
     verify.erase(unique(verify.begin(), verify.end()), verify.end());
 
-    auto get_need = [&classes, &part_psum, &need_psum, n](int64_t top) {
-      int index = lower_bound(part_psum.begin(), part_psum.end(), top) -
+    auto get_need = [&classes, &part_psum, &need_psum, n](int64_t i) {
+      int index = lower_bound(part_psum.begin(), part_psum.end(), i) -
                   part_psum.begin();
 
       return need_psum[index - 1] +
-             (top - part_psum[index - 1]) * classes[index - 1][1];
+             (i - part_psum[index - 1]) * classes[index - 1][1];
     };
 
     auto get_review = [&engineers, &engineer_psum, &review_psum, m](int64_t i) {
-      auto it = upper_bound(
-          engineers.begin(), engineers.end(), i,
-          [](int64_t i, const array<int64_t, 2>& arr) { return i < arr[1]; });
-      int count = it - engineers.begin();
+      int index = upper_bound(engineers.begin(), engineers.end(), i,
+                              [](int64_t i, const array<int64_t, 2>& arr) {
+                                return i < arr[1];
+                              }) -
+                  engineers.begin();
 
-      return review_psum[count] + (engineer_psum[m] - engineer_psum[count]) * i;
+      return review_psum[index] + (engineer_psum[m] - engineer_psum[index]) * i;
     };
 
     skip = false;
