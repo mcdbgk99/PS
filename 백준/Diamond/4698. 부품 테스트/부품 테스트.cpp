@@ -88,11 +88,11 @@ int main() {
     }
 
     sort(classes.begin(), classes.end(),
-         [](array<int64_t, 2>& left, array<int64_t, 2>& right) {
+         [](const array<int64_t, 2>& left, const array<int64_t, 2>& right) {
            return left[1] > right[1];
          });
     sort(engineers.begin(), engineers.end(),
-         [](array<int64_t, 2>& left, array<int64_t, 2>& right) {
+         [](const array<int64_t, 2>& left, const array<int64_t, 2>& right) {
            return left[1] < right[1];
          });
 
