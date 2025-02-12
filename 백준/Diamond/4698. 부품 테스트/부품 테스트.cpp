@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void SortVector(vector<array<int64_t, 2>> &v) {
+void SortVector(vector<array<int64_t, 2>>& v) {
   const int b = 16;
   const int bits = 64;
   const int buckets = 1 << b;
@@ -81,14 +81,20 @@ int main() {
         break;
       }
     }
+
     if (skip) {
-      cout << 0 << "\n";
+      cout << "0\n";
       continue;
     }
 
-    SortVector(classes);
-    reverse(classes.begin(), classes.end());
-    SortVector(engineers);
+    sort(classes.begin(), classes.end(),
+         [](array<int64_t, 2>& left, array<int64_t, 2>& right) {
+           return left[1] > right[1];
+         });
+    sort(engineers.begin(), engineers.end(),
+         [](array<int64_t, 2>& left, array<int64_t, 2>& right) {
+           return left[1] < right[1];
+         });
 
     vector<int64_t> part_psum(n + 1, 0), need_psum(n + 1, 0);
 
@@ -124,43 +130,20 @@ int main() {
     verify.erase(unique(verify.begin(), verify.end()), verify.end());
 
     auto get_need = [&classes, &part_psum, &need_psum, n](int64_t top) {
-      int left = 1, right = n, index = n;
-
-      while (left <= right) {
-        int mid = (left + right) / 2;
-
-        if (part_psum[mid] >= top) {
-          index = mid;
-          right = mid - 1;
-        } else {
-          left = mid + 1;
-        }
-      }
+      int index = lower_bound(part_psum.begin(), part_psum.end(), top) -
+                  part_psum.begin();
 
       return need_psum[index - 1] +
              (top - part_psum[index - 1]) * classes[index - 1][1];
     };
 
     auto get_review = [&engineers, &engineer_psum, &review_psum, m](int64_t i) {
-      int left = 0, right = m - 1, index = -1;
+      auto it = upper_bound(
+          engineers.begin(), engineers.end(), i,
+          [](int64_t i, const array<int64_t, 2>& arr) { return i < arr[1]; });
+      int count = it - engineers.begin();
 
-      while (left <= right) {
-        int mid = (left + right) / 2;
-
-        if (engineers[mid][1] <= i) {
-          index = mid;
-          left = mid + 1;
-        } else {
-          right = mid - 1;
-        }
-      }
-
-      int64_t result = (index >= 0 ? review_psum[index + 1] : 0);
-      result +=
-          (engineer_psum[m] - ((index >= 0) ? engineer_psum[index + 1] : 0)) *
-          i;
-
-      return result;
+      return review_psum[count] + (engineer_psum[m] - engineer_psum[count]) * i;
     };
 
     skip = false;
