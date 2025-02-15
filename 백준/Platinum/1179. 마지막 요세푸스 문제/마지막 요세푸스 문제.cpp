@@ -33,7 +33,7 @@ int main() {
     if (result < 0) {
       result += s;
     } else {
-      result += (result / (k - 1));
+      result += result / (k - 1);
     }
   }
 
