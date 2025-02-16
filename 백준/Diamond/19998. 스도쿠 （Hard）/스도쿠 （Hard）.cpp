@@ -165,7 +165,8 @@ int main() {
         cols.push_back(kBoardSize * 1 + y * kMaxN + (cell - 1) + 1);
         cols.push_back(kBoardSize * 2 + x * kMaxN + (cell - 1) + 1);
         cols.push_back(kBoardSize * 3 +
-                       ((y / kBlockSize) * 3 + (x / kBlockSize)) * kMaxN +
+                       ((y / kBlockSize) * kBlockSize + (x / kBlockSize)) *
+                           kMaxN +
                        (cell - 1) + 1);
         row_front[row] = dlx.node_count;
         dlx.AddMatrixRow(row, cols);
