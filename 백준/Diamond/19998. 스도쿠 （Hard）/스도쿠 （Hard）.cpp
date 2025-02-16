@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-constexpr int kNodeSize = 4000;
+constexpr int kNodeSize = 3500;
 constexpr int kMaxN = 9;
 constexpr int kBoardSize = kMaxN * kMaxN;
 constexpr int kBlockSize = 3;
