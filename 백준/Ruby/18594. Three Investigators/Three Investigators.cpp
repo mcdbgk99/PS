@@ -75,7 +75,7 @@ int main() {
     int a_unique_size = a_unique.size();
 
     vector<FenwickTree> trees;
-    for (int i = 0; i <= 5; ++i) {
+    for (int i = 0; i < 5; ++i) {
       trees.push_back(FenwickTree(a_unique_size));
     }
 
