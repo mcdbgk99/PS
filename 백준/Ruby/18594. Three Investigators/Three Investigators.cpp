@@ -1,3 +1,4 @@
+#pragma GCC optimize("O3")
 #include <bits/stdc++.h>
 using namespace std;
 using i64 = long long;
@@ -75,9 +76,8 @@ int main() {
     int a_unique_size = a_unique.size();
 
     vector<FenwickTree> trees;
-    FenwickTree temp(a_unique_size);
     for (int i = 0; i < 5; ++i) {
-      trees.push_back(temp);
+      trees.push_back(FenwickTree(a_unique_size));
     }
 
     vector<int> comp(n);
