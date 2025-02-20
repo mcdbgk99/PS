@@ -84,17 +84,18 @@ int main() {
       comp[i] = lower_bound(a_unique.begin(), a_unique.end(), a[i]) -
                 a_unique.begin();
     }
-    a_unique.clear();
 
     vector<i64> result(n, 0);
     i64 final = 0;
+    vector<pair<int, i64>> now_state;
 
     for (int i = 0; i < n; ++i) {
-      vector<pair<int, i64>> now_state;
+      now_state.clear();
       now_state.push_back({comp[i], a[i]});
 
       for (int j = 0; j < 5; ++j) {
         vector<pair<int, i64>> new_state;
+        new_state.reserve(now_state.size());
 
         for (auto [key, delta] : now_state) {
           int index = key + 1;
