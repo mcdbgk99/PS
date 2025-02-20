@@ -86,15 +86,15 @@ int main() {
     }
 
     vector<i64> result(n, 0);
-    i64 final = 0;
-    vector<pair<int, i64>> now_state;
+    i64 f = 0;
+    vector<pair<int, i64>> now_state, new_state;
 
     for (int i = 0; i < n; ++i) {
       now_state.clear();
       now_state.push_back({comp[i], a[i]});
 
       for (int j = 0; j < 5; ++j) {
-        vector<pair<int, i64>> new_state;
+        new_state.clear();
         new_state.reserve(now_state.size());
 
         for (auto [key, delta] : now_state) {
@@ -112,19 +112,19 @@ int main() {
             i64 new_delta = min(delta, trees[j].val[lower]);
             trees[j].Update(lower, -new_delta);
 
-            final -= new_delta;
+            f -= new_delta;
             delta -= new_delta;
             new_state.push_back({lower, new_delta});
           }
 
           trees[j].Update(key, original_delta);
-          final += original_delta;
+          f += original_delta;
         }
 
-        now_state = move(new_state);
+        swap(now_state, new_state);
       }
 
-      result[i] = final;
+      result[i] = f;
     }
 
     for (int i = 0; i < n; ++i) {
