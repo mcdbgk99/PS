@@ -1,4 +1,3 @@
-#pragma GCC optimize("O3")
 #include <bits/stdc++.h>
 using namespace std;
 using i64 = long long;
