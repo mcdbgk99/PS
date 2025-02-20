@@ -67,29 +67,35 @@ int main() {
     vector<int> a_unique = a;
     sort(a_unique.begin(), a_unique.end());
     a_unique.erase(unique(a_unique.begin(), a_unique.end()), a_unique.end());
+    int a_unique_size = a_unique.size();
 
     vector<FenwickTree> trees;
-
     for (int i = 0; i <= 5; ++i) {
-      trees.push_back(FenwickTree(a_unique.size()));
+      trees.push_back(FenwickTree(a_unique_size));
     }
+
+    vector<int> comp(n);
+    for (int i = 0; i < n; ++i) {
+      comp[i] = lower_bound(a_unique.begin(), a_unique.end(), a[i]) -
+                a_unique.begin();
+    }
+    a_unique.clear();
 
     vector<i64> result(n, 0);
     i64 final = 0;
 
     for (int i = 0; i < n; ++i) {
       vector<pair<int, i64>> now_state;
-      now_state.push_back({a[i], a[i]});
+      now_state.push_back({comp[i], a[i]});
 
       for (int j = 0; j < 5; ++j) {
         vector<pair<int, i64>> new_state;
 
         for (auto [key, delta] : now_state) {
-          int index = upper_bound(a_unique.begin(), a_unique.end(), key) -
-                      a_unique.begin();
+          int index = key + 1;
           i64 original_delta = delta;
 
-          while (delta > 0 && index < a_unique.size()) {
+          while (delta > 0 && index < a_unique_size) {
             i64 sum = (index > 0 ? trees[j].Query(index - 1) : 0);
 
             if (!(trees[j].Accumulate() - sum)) {
@@ -102,12 +108,10 @@ int main() {
 
             final -= new_delta;
             delta -= new_delta;
-            new_state.push_back({a_unique[lower], new_delta});
+            new_state.push_back({lower, new_delta});
           }
 
-          int lower = lower_bound(a_unique.begin(), a_unique.end(), key) -
-                      a_unique.begin();
-          trees[j].Update(lower, original_delta);
+          trees[j].Update(key, original_delta);
           final += original_delta;
         }
 
