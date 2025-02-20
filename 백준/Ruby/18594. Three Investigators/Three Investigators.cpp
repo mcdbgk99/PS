@@ -32,7 +32,7 @@ class FenwickTree {
   inline int Search(i64 delta) {
     int result = 0;
 
-    for (int i = 1 << 20; i; i >>= 1) {
+    for (int i = 1 << (31 - __builtin_clz(n)); i; i >>= 1) {
       int j = result + i;
 
       if (j <= n && tree[j] < delta) {
