@@ -9,7 +9,7 @@ class FenwickTree {
 
   FenwickTree(int n) : n(n), tree(n + 1, 0), val(n, 0) {}
 
-  void Update(int index, i64 delta) {
+  inline void Update(int index, i64 delta) {
     val[index] += delta;
     ++index;
 
@@ -18,7 +18,7 @@ class FenwickTree {
     }
   }
 
-  i64 Query(int index) {
+  inline i64 Query(int index) {
     i64 result = 0;
     ++index;
 
@@ -29,7 +29,7 @@ class FenwickTree {
     return result;
   }
 
-  int Search(i64 delta) {
+  inline int Search(i64 delta) {
     int result = 0;
 
     for (int i = 1 << 20; i; i >>= 1) {
@@ -44,7 +44,7 @@ class FenwickTree {
     return result;
   }
 
-  i64 Accumulate() { return Query(n - 1); }
+  inline i64 Accumulate() { return Query(n - 1); }
 };
 
 int main() {
