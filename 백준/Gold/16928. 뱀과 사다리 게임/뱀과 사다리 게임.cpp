@@ -1,16 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int> v(100 + 1, 0);
-vector<int> visited(100 + 1, 0);
-queue<tuple<int, int>> q;
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
   int n, m;
   cin >> n >> m;
+
+  vector<int> v(100 + 1, 0);
+  vector<int> visited(100 + 1, 0);
+  queue<tuple<int, int>> q;
 
   for (int i = 0; i < n + m; ++i) {
     int x;
@@ -22,8 +22,7 @@ int main() {
   int result = 0;
 
   while (!q.empty()) {
-    int now_num = get<0>(q.front());
-    int now_step = get<1>(q.front());
+    auto [now_num, now_step] = q.front();
     q.pop();
 
     if (now_num == 100) {
