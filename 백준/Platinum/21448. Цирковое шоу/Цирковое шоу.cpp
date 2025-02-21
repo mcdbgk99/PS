@@ -10,14 +10,15 @@ int main() {
   cin >> n;
 
   vector<tuple<i64, i64>> v(n);
-  set<i64> cut;
+  set<i64> temp;
 
   for (auto& [s, t] : v) {
     cin >> s >> t;
-    cut.insert(s);
-    cut.insert(s + t);
+    temp.insert(s);
+    temp.insert(s + t);
   }
 
+  vector<i64> cut(temp.begin(), temp.end());
   int best = 0;
   i64 best_a, best_b = 0;
 
@@ -46,8 +47,6 @@ int main() {
       }
     }
   }
-
-  vector<int> result(n, 0);
 
   for (auto& [s, t] : v) {
     if (s >= best_a && s + t <= best_b) {
